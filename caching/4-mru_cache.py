@@ -1,53 +1,48 @@
 #!/usr/bin/python3
-""" 4. MRU Caching
-"""
-
-from collections import deque
-
-BaseCaching = __import__("base_caching").BaseCaching
+""" MRU Caching """
+from base_caching import BaseCaching
 
 
 class MRUCache(BaseCaching):
-    """ Create a class MRUCache that inherits from BaseCaching and is a caching
-    system
-    """
+    """ Class that inherits from BaseCaching and is a caching system """
 
     def __init__(self):
-        """ Init
-        """
         super().__init__()
-        self.queue = deque()
+        self.head, self.tail = 'head', 'tail'
+        self.next, self.prev = {}, {}
+        self.handle(self.head, self.tail)
+
+    def handle(self, head, tail):
+        """ MRU algorithm, handle elements """
+        self.next[head], self.prev[tail] = tail, head
+
+    def _remove(self, key):
+        """ MRU algorithm, remove element """
+        self.handle(self.prev[key], self.next[key])
+        del self.prev[key], self.next[key], self.cache_data[key]
+
+    def _add(self, key, item):
+        """ MRU algorithm, add element """
+        if len(self.cache_data) > BaseCaching.MAX_ITEMS - 1:
+            print("DISCARD: {}".format(self.prev[self.tail]))
+            self._remove(self.prev[self.tail])
+        self.cache_data[key] = item
+        self.handle(self.prev[self.tail], key)
+        self.handle(key, self.tail)
 
     def put(self, key, item):
-        """ Must assign to the dictionary self.cache_data the item value for
-        the key key
-        """
+        """ Assign to the dictionary """
         if key and item:
             if key in self.cache_data:
-                self.queue.remove(key)
-            elif self.is_full():
-                self.evict()
-            self.queue.append(key)
-            self.cache_data[key] = item
+                self._remove(key)
+            self._add(key, item)
 
     def get(self, key):
-        """ Must return the value in self.cache_data linked to key.
-        """
+        """ Return the value linked """
+        if key is None or self.cache_data.get(key) is None:
+            return None
         if key in self.cache_data:
-            self.queue.remove(key)
-            self.queue.append(key)
-            return self.cache_data.get(key)
-
-    def is_full(self):
-        """ If the number of items in self.cache_data is higher that
-        BaseCaching.MAX_ITEMS
-        """
-        return len(self.cache_data) >= self.MAX_ITEMS
-
-    def evict(self):
-        """ you must print DISCARD: with the key discarded and following by a
-        new line
-        """
-        popped = self.queue.pop()
-        del self.cache_data[popped]
-        print("DISCARD: " + str(popped))
+            value = self.cache_data[key]
+            self._remove(key)
+            self._add(key, value)
+            return value
