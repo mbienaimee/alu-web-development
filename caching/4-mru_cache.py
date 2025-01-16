@@ -7,6 +7,7 @@ class MRUCache(BaseCaching):
     """ Class that inherits from BaseCaching and is a caching system """
 
     def __init__(self):
+        """ Initialize the MRU Cache """
         super().__init__()
         self.head, self.tail = 'head', 'tail'
         self.next, self.prev = {}, {}
