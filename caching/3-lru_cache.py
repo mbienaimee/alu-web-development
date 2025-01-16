@@ -7,6 +7,7 @@ class LRUCache(BaseCaching):
     """ Class that inherits from BaseCaching and is a caching system """
 
     def __init__(self):
+        """ Initialize the LRU Cache """
         super().__init__()
         self.head, self.tail = '-', '='
         self.next, self.prev = {}, {}
