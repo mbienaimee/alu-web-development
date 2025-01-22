@@ -1,83 +1,48 @@
 #!/usr/bin/python3
-""" 5. LFU Caching
-"""
-
-from enum import Enum
-from heapq import heappush, heappop
-from itertools import count
-
-BaseCaching = __import__("base_caching").BaseCaching
-
-
-class HeapItemStatus(Enum):
-    """ HeapItemStatus class.
-    """
-    ACTIVE = 1
-    INACTIVE = 2
+""" Create LFUCache class that inherits from BaseCaching """
+BaseCaching = __import__('base_caching').BaseCaching
 
 
 class LFUCache(BaseCaching):
-    """ Create a class LFUCache that inherits from BaseCaching and is a caching
-    system
-    """
+    """ Define LFUCache """
 
     def __init__(self):
-        """ Init
-        """
+        """ Initialize LFUCache """
+        self.queue = []
+        self.lfu = {}
         super().__init__()
-        self.heap = []
-        self.map = {}
-        self.counter = count()
 
     def put(self, key, item):
-        """ Must assign to the dictionary self.cache_data the item value for
-        the key key
-        """
+        """ Assign the item to the dictionary """
         if key and item:
-            if key in self.cache_data:
-                self.rehydrate(key)
+            if (len(self.queue) >= self.MAX_ITEMS and
+                    not self.cache_data.get(key)):
+                delete = self.queue.pop(0)
+                self.lfu.pop(delete)
+                self.cache_data.pop(delete)
+                print('DISCARD: {}'.format(delete))
+
+            if self.cache_data.get(key):
+                self.queue.remove(key)
+                self.lfu[key] += 1
             else:
-                if self.is_full():
-                    self.evict()
-                self.add_to_heap(key)
+                self.lfu[key] = 0
+
+            insert_index = 0
+            while (insert_index < len(self.queue) and
+                   not self.lfu[self.queue[insert_index]]):
+                insert_index += 1
+            self.queue.insert(insert_index, key)
             self.cache_data[key] = item
 
     def get(self, key):
-        """ Must return the value in self.cache_data linked to key.
-        """
-        if key in self.cache_data:
-            self.rehydrate(key)
-            return self.cache_data.get(key)
-
-    def is_full(self):
-        """ If the number of items in self.cache_data is higher that
-        BaseCaching.MAX_ITEMS
-        """
-        return len(self.cache_data) >= self.MAX_ITEMS
-
-    def evict(self):
-        """ you must print DISCARD: with the key discarded and following by a
-        new line
-        """
-        while self.heap:
-            _, __, item, status = heappop(self.heap)
-            if status == HeapItemStatus.ACTIVE:
-                print("DISCARD: " + str(item))
-                del self.cache_data[item]
-                return
-
-    def rehydrate(self, key):
-        """ Marks current item as inactive and reinserts updated count back
-        into heap.
-        """
-        entry = self.map[key]
-        entry[-1] = HeapItemStatus.INACTIVE
-        self.add_to_heap(key, entry[0])
-
-    def add_to_heap(self, key, count=0):
-        """ Adds a new entry into heap.
-        """
-        entry = [1 + count, next(self.counter), key, HeapItemStatus.ACTIVE]
-        self.map[key] = entry
-        heappush(self.heap, entry)
-        
+        """ Return the value associated with the given key """
+        if self.cache_data.get(key):
+            self.lfu[key] += 1
+            if self.queue.index(key) + 1 != len(self.queue):
+                while (self.queue.index(key) + 1 < len(self.queue) and
+                       self.lfu[key] >=
+                       self.lfu[self.queue[self.queue.index(key) + 1]]):
+                    self.queue.insert(self.queue.index(key) + 1,
+                                      self.queue.pop(self.queue.index(key)))
+        return self.cache_data.get(key)
