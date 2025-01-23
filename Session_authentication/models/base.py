@@ -40,7 +40,7 @@ class Base():
         """
         if type(self) != type(other):
             return False
-        if not isinstance(self, Base):
+        if not isintanceof(Base):
             return False
         return (self.id == other.id)
 
@@ -133,14 +133,5 @@ class Base():
                 if (getattr(obj, k) != v):
                     return False
             return True
-<<<<<<< HEAD
         
         return list(filter(_search, DATA[s_class].values()))
-=======
-        try:
-            res = list(filter(_search, DATA[s_class].values()))
-        except Exception:
-            res = []
-
-        return res
->>>>>>> 802b8f3c485136156e0c3fb6df2b6dacea68486d

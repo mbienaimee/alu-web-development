@@ -16,11 +16,7 @@ class BasicAuth(Auth):
     def extract_base64_authorization_header(
             self,
             authorization_header: str
-<<<<<<< HEAD
-    ) -> str:
-=======
             ) -> str:
->>>>>>> 802b8f3c485136156e0c3fb6df2b6dacea68486d
         """extract base64 auth header"""
         if authorization_header is None:
             return None
@@ -33,11 +29,7 @@ class BasicAuth(Auth):
     def decode_base64_authorization_header(
             self,
             base64_authorization_header: str
-<<<<<<< HEAD
-    ) -> str:
-=======
             ) -> str:
->>>>>>> 802b8f3c485136156e0c3fb6df2b6dacea68486d
         """decode base64 auth header"""
         if base64_authorization_header is None:
             return None
@@ -52,11 +44,7 @@ class BasicAuth(Auth):
     def extract_user_credentials(
             self,
             decoded_base64_authorization_header: str
-<<<<<<< HEAD
-    ) -> (str, str):
-=======
             ) -> (str, str):
->>>>>>> 802b8f3c485136156e0c3fb6df2b6dacea68486d
         """extract user credentials"""
         if decoded_base64_authorization_header is None:
             return None, None
@@ -70,11 +58,7 @@ class BasicAuth(Auth):
             self,
             user_email: str,
             user_pwd: str
-<<<<<<< HEAD
-    ) -> TypeVar('User'):
-=======
             ) -> TypeVar('User'):
->>>>>>> 802b8f3c485136156e0c3fb6df2b6dacea68486d
         """user object from credentials"""
         if user_email is None or type(user_email) is not str:
             return None
