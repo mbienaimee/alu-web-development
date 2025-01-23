@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 # Simple API
 
 Simple HTTP API for playing with `User` model.
@@ -41,6 +41,5 @@ $ API_HOST=0.0.0.0 API_PORT=5000 python3 -m api.v1.app
 - `DELETE /api/v1/users/:id`: deletes an user based on the ID
 - `POST /api/v1/users`: creates a new user (JSON parameters: `email`, `password`, `last_name` (optional) and `first_name` (optional))
 - `PUT /api/v1/users/:id`: updates an user based on the ID (JSON parameters: `last_name` and `first_name`)
-=======
-Basic_authentication Readme file
->>>>>>> 802b8f3c485136156e0c3fb6df2b6dacea68486d
+
+
